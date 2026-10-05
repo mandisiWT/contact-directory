@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contact Directory</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><i>C</i> Contact Directory</div>
+    <nav><a href="#directory">Directory</a><a href="#directory">Departments</a></nav>
+  </header>
+
+  <section class="hero">
+    <h1>Find the right person, fast.</h1>
+    <p>Search by name, role, or department to get an email address or phone number.</p>
+    <label class="search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Search contacts" aria-label="Search contacts" autocomplete="off">
+    </label>
+    <div class="chips" id="chips" role="group" aria-label="Filter by department"></div>
+  </section>
+
+  <main id="directory">
+    <p class="count" id="count" aria-live="polite"></p>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer>Sample data. Replace it with data from your own database or API.</footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
