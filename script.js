@@ -1,14 +1,19 @@
 // Sample data. Later, load this from a server with fetch('/api/contacts') instead.
 const contacts = [
-  {name:"Amara Nkosi", role:"Operations Manager", dept:"Operations", email:"amara.nkosi@example.com", phone:"+27 31 555 0101"},
-  {name:"Daniel Pillay", role:"Senior Accountant", dept:"Finance", email:"daniel.pillay@example.com", phone:"+27 31 555 0102"},
-  {name:"Lerato Mokoena", role:"Recruiter", dept:"People", email:"lerato.mokoena@example.com", phone:"+27 31 555 0103"},
-  {name:"Sam Naidoo", role:"Software Engineer", dept:"Engineering", email:"sam.naidoo@example.com", phone:"+27 31 555 0104"},
-  {name:"Chloe van Wyk", role:"Support Lead", dept:"Support", email:"chloe.vanwyk@example.com", phone:"+27 31 555 0105"},
-  {name:"Thabo Dlamini", role:"Engineering Manager", dept:"Engineering", email:"thabo.dlamini@example.com", phone:"+27 31 555 0106"},
-  {name:"Priya Govender", role:"Payroll Specialist", dept:"Finance", email:"priya.govender@example.com", phone:"+27 31 555 0107"},
-  {name:"Jason Mthembu", role:"Logistics Coordinator", dept:"Operations", email:"jason.mthembu@example.com", phone:"+27 31 555 0108"},
-  {name:"Nomsa Khumalo", role:"HR Business Partner", dept:"People", email:"nomsa.khumalo@example.com", phone:"+27 31 555 0109"}
+{name:"Nobuhle Gaqa", role:"HR Director", dept:"Human Resources", email:"nobuhle.gaqa@example.com", phone:"+27 31 555 0101"},
+{name:"Natesha Balgobind", role:"Finance Director", dept:"Finance", email:"natesha.balgobind@example.com", phone:"+27 31 555 0102"},
+{name:"Andrew Whitley", role:"Project Director", dept:"Projects", email:"andrew.whitley@example.com", phone:"+27 31 555 0103"},
+{name:"Malusi Zamisa", role:"Finance Manager", dept:"Finance", email:"malusi.zamisa@example.com", phone:"+27 31 555 0142"},
+{name:"Lethukuthula Ngubane", role:"Communication", dept:"Communication", email:"lethukuthula.ngubane@example.com", phone:"+27 31 555 0118"},
+{name:"Amanda Hadebe", role:"Software Developer", dept:"ICT", email:"amanda.hadebe@example.com", phone:"+27 31 555 0127"},
+{name:"Christina Mngomezulu", role:"HR Manager", dept:"Human Resource", email:"christina.mngomezulu@example.com", phone:"+27 31 555 0163"},
+{name:"Gugulethu Maphalala", role:"HR Officer", dept:"Human Resource", email:"gugulethu.maphalala@example.com", phone:"+27 31 555 0135"},
+{name:"Nokuthula Ngubane", role:"Accounts Clerk", dept:"Finance", email:"nokuthula.ngubane@example.com", phone:"+27 31 555 0171"},
+{name:"Thulisiwe Mthembu", role:"Project Manager", dept:"Projects", email:"thulisiwe.mthembu@example.com", phone:"+27 31 555 0156"},
+{name:"Samkelisiwe Manzini", role:"Hub Manager", dept:"Projects", email:"samkelisiwe.manzini@example.com", phone:"+27 31 555 0189"},
+{name:"Roy Jones", role:"IT Systems Administrator", dept:"ICT", email:"roy.jones@example.com", phone:"+27 31 555 0124"},
+{name:"Silindile Chilli", role:"Procurement Officer", dept:"Finance", email:"silindile.chilli@example.com", phone:"+27 31 555 0198"}
+
 ]
 
 const depts = ["All", ...new Set(contacts.map(c => c.dept))].sort((a,b) => a==="All" ? -1 : b==="All" ? 1 : a.localeCompare(b));
