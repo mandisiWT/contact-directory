@@ -1,0 +1,4 @@
+node_modules
+directory.db
+directory.db-wal
+directory.db-shm

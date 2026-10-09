@@ -11,26 +11,83 @@
 <div class="wrap">
   <header>
     <div class="logo"><i>C</i> Contact Directory</div>
-    <nav><a href="#directory">Directory</a><a href="#directory">Departments</a></nav>
+    <nav id="userbar" hidden><span id="who"></span><button class="btn ghost" id="acctBtn">Account</button><button class="btn ghost" id="logout">Log out</button></nav>
   </header>
 
-  <section class="hero">
-    <h1>Find the right person, fast.</h1>
-    <p>Search by name, role, or department to get an email address or phone number.</p>
-    <label class="search">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="q" type="search" placeholder="Search contacts" aria-label="Search contacts" autocomplete="off">
-    </label>
-    <div class="chips" id="chips" role="group" aria-label="Filter by department"></div>
+  <!-- Sign-in view -->
+  <section id="loginView" class="login" hidden>
+    <h1>Sign in</h1>
+    <p class="sub">Sign in to view and manage the directory.</p>
+    <form id="loginForm" class="form">
+      <label>Username<input id="lu" required autocomplete="username"></label>
+      <label>Password<input id="lp" type="password" required autocomplete="current-password"></label>
+      <p class="err" id="loginErr" role="alert"></p>
+      <button class="btn" type="submit">Sign in</button>
+    </form>
   </section>
 
-  <main id="directory">
-    <p class="count" id="count" aria-live="polite"></p>
-    <div class="grid" id="grid"></div>
-  </main>
+  <!-- Directory view -->
+  <div id="appView" hidden>
+    <section class="hero">
+      <h1>Find the right person, fast.</h1>
+      <p>Search by name, role, or department to get an email address or phone number.</p>
+      <div class="searchrow">
+        <label class="search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="q" type="search" placeholder="Search contacts" aria-label="Search contacts" autocomplete="off">
+        </label>
+        <button class="btn" id="addBtn">+ Add contact</button>
+      </div>
+      <div class="chips" id="chips" role="group" aria-label="Filter by department"></div>
+    </section>
+    <main id="directory">
+      <p class="count" id="count" aria-live="polite"></p>
+      <div class="grid" id="grid"></div>
+    </main>
+  </div>
 
-  <footer>Sample data. Replace it with data from your own database or API.</footer>
+  <footer>Contact Directory</footer>
 </div>
+
+<dialog id="dlg">
+  <form id="contactForm" class="form" method="dialog">
+    <h2 id="dlgTitle">Add contact</h2>
+    <label>Name<input id="f_name" required maxlength="200"></label>
+    <label>Role<input id="f_role" maxlength="200"></label>
+    <label>Department<input id="f_dept" list="deptList" maxlength="200"></label>
+    <datalist id="deptList"></datalist>
+    <label>Email<input id="f_email" type="email" maxlength="200"></label>
+    <label>Phone<input id="f_phone" type="tel" maxlength="200"></label>
+    <p class="err" id="formErr" role="alert"></p>
+    <div class="actions">
+      <button class="btn ghost" type="button" id="cancel">Cancel</button>
+      <button class="btn" type="submit">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="acctDlg">
+  <form id="pwForm" class="form">
+    <h2>Change password</h2>
+    <label>Current password<input id="pw_cur" type="password" required autocomplete="current-password"></label>
+    <label>New password (8+ characters)<input id="pw_new" type="password" required minlength="8" autocomplete="new-password"></label>
+    <p id="pwMsg" role="status"></p>
+    <button class="btn" type="submit">Update password</button>
+  </form>
+  <section id="usersSec" hidden>
+    <hr>
+    <h2>Users</h2>
+    <ul id="userList" class="ulist"></ul>
+    <form id="userForm" class="form">
+      <label>New username<input id="nu_name" required minlength="3" maxlength="50" autocomplete="off"></label>
+      <label>Temporary password (8+ characters)<input id="nu_pw" type="password" required minlength="8" autocomplete="new-password"></label>
+      <label>Role<select id="nu_role"><option value="viewer">Viewer (view only)</option><option value="editor">Editor (add, edit, delete contacts)</option><option value="admin">Admin (editor + manage users)</option></select></label>
+      <p id="userMsg" role="status"></p>
+      <button class="btn" type="submit">Add user</button>
+    </form>
+  </section>
+  <div class="actions"><button class="btn ghost" type="button" id="acctClose">Close</button></div>
+</dialog>
 
 <script src="script.js"></script>
 </body>
