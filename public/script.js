@@ -16,7 +16,7 @@ function showLogin() {
   $("loginView").hidden = false; $("appView").hidden = true; $("userbar").hidden = true;
 }
 async function showApp(me) {
-  role = me.role; isAdmin = role === "admin"; myName = me.username; $("addBtn").hidden = role === "viewer";
+  role = me.role; isAdmin = role === "admin"; myName = me.username; $("addBtn").hidden = role === "viewer"; $("importBtn").hidden = role === "viewer";
   $("loginView").hidden = true; $("appView").hidden = false; $("userbar").hidden = false;
   $("who").textContent = me.username;
   contacts = await api("/api/contacts");
@@ -25,40 +25,40 @@ async function showApp(me) {
 
 // ----- render -----
 function renderChips() {
-  const depts = ["All", ...[...new Set(contacts.map(c => c.dept).filter(Boolean))].sort((a,b) => a.localeCompare(b))];
-  if (!depts.includes(dept)) dept = "All";
-  $("chips").innerHTML = depts.map(d =>
-    `<button class="chip" aria-pressed="${d===dept}" data-d="${esc(d)}">${esc(d)}</button>`).join("");
-  $("deptList").innerHTML = depts.slice(1).map(d => `<option value="${esc(d)}">`).join("");
+  const names = [...new Set(contacts.map(c => c.dept).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+  if (dept !== "All" && !names.includes(dept)) dept = "All";
+  const n = d => contacts.filter(c => c.dept === d).length;
+  $("deptSel").innerHTML = `<option value="All">All departments (${contacts.length})</option>` +
+    names.map(d => `<option value="${esc(d)}">${esc(d)} (${n(d)})</option>`).join("");
+  $("deptSel").value = dept;
+  $("deptList").innerHTML = names.map(d => `<option value="${esc(d)}">`).join("");
 }
 
 function render() {
   const q = $("q").value.trim().toLowerCase();
   const list = contacts.filter(c =>
     (dept==="All" || c.dept===dept) &&
-    (c.name+" "+c.role+" "+c.dept).toLowerCase().includes(q));
+    (c.name+" "+c.role+" "+c.dept+" "+c.email).toLowerCase().includes(q));
   $("count").textContent = list.length + (list.length===1 ? " contact" : " contacts");
   $("grid").innerHTML = list.length ? list.map(c => {
     const ini = c.name.split(" ").map(w => w[0]).slice(0,2).join("");
-    return `<article class="card">
-      <div class="top"><div class="av">${esc(ini)}</div>
-        <div><p class="name">${esc(c.name)}</p><p class="role">${esc(c.role)}${c.role && c.dept ? ", " : ""}${esc(c.dept)}</p></div></div>
-      ${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : ""}
-      ${c.phone ? `<a href="tel:${esc(c.phone.replace(/\s/g,""))}">${esc(c.phone)}</a>` : ""}
+    return `<article class="row">
+      <div class="who"><div class="av">${esc(ini)}</div>
+        <div><p class="name">${esc(c.name)}</p><p class="role">${esc(c.role)}</p></div></div>
+      ${c.dept ? `<span class="dept">${esc(c.dept)}</span>` : "<span></span>"}
+      ${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : "<span></span>"}
+      ${c.phone ? `<a href="tel:${esc(c.phone.replace(/\s/g,""))}">${esc(c.phone)}</a>` : "<span></span>"}
       ${role !== "viewer" ? `<div class="actions">
         <button class="btn ghost sm" data-edit="${c.id}">Edit</button>
         <button class="btn danger sm" data-del="${c.id}">Delete</button>
-      </div>` : ""}
+      </div>` : "<span></span>"}
     </article>`;
   }).join("") : `<div class="empty">No contacts match your search. Try a different name or department.</div>`;
 }
 
 // ----- events -----
-$("q").addEventListener("input", render);
-$("chips").addEventListener("click", e => {
-  const b = e.target.closest("button"); if (!b) return;
-  dept = b.dataset.d; renderChips(); render();
-});
+$("q").addEventListener("input", () => { render(); suggest(); });
+$("deptSel").addEventListener("change", () => { dept = $("deptSel").value; render(); suggest(); });
 
 $("loginForm").addEventListener("submit", async e => {
   e.preventDefault(); $("loginErr").textContent = "";
@@ -156,4 +156,56 @@ $("userList").addEventListener("change", async e => {
   const sel = e.target.closest("[data-rid]"); if (!sel) return;
   try { await api("/api/users/" + sel.dataset.rid + "/role", { method: "PUT", body: JSON.stringify({ role: sel.value }) }); say($("userMsg"), "Role updated.", true); }
   catch (err) { say($("userMsg"), err.message); await loadUsers(); }
+});
+
+// ----- type-ahead name suggestions (alphabetical) -----
+let sugItems = [], sugIdx = -1;
+function hideSugg() { $("sugg").hidden = true; sugIdx = -1; $("q").setAttribute("aria-expanded", "false"); }
+function suggest() {
+  const q = $("q").value.trim().toLowerCase();
+  if (!q) return hideSugg();
+  const pool = contacts.filter(c => dept === "All" || c.dept === dept);
+  const byName = (a, b) => a.name.localeCompare(b.name);
+  const first = [], other = [];
+  pool.forEach(c => {
+    const n = c.name.toLowerCase();
+    if (n.startsWith(q)) first.push(c);
+    else if (n.split(/\s+/).some(w => w.startsWith(q))) other.push(c);
+  });
+  sugItems = [...first.sort(byName), ...other.sort(byName)].slice(0, 8);
+  if (!sugItems.length) return hideSugg();
+  sugIdx = -1;
+  $("sugg").innerHTML = sugItems.map((c, i) =>
+    `<li role="option" id="sg${i}" data-i="${i}"><span>${esc(c.name)}</span><small>${esc(c.dept || c.role)}</small></li>`).join("");
+  $("sugg").hidden = false; $("q").setAttribute("aria-expanded", "true");
+}
+function pick(i) { const c = sugItems[i]; if (!c) return; $("q").value = c.name; hideSugg(); render(); }
+function markSugg() {
+  [...$("sugg").children].forEach((li, i) => li.setAttribute("aria-selected", i === sugIdx));
+  $("q").setAttribute("aria-activedescendant", sugIdx >= 0 ? "sg" + sugIdx : "");
+}
+$("q").setAttribute("role", "combobox"); $("q").setAttribute("aria-controls", "sugg"); $("q").setAttribute("aria-expanded", "false");
+$("q").addEventListener("keydown", e => {
+  if ($("sugg").hidden) return;
+  if (e.key === "ArrowDown") { e.preventDefault(); sugIdx = (sugIdx + 1) % sugItems.length; markSugg(); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); sugIdx = (sugIdx - 1 + sugItems.length) % sugItems.length; markSugg(); }
+  else if (e.key === "Enter" && sugIdx >= 0) { e.preventDefault(); pick(sugIdx); }
+  else if (e.key === "Escape") hideSugg();
+});
+$("sugg").addEventListener("mousedown", e => { const li = e.target.closest("li"); if (li) { e.preventDefault(); pick(Number(li.dataset.i)); } });
+document.addEventListener("click", e => { if (!e.target.closest(".sw")) hideSugg(); });
+
+// ----- Excel import -----
+$("importBtn").addEventListener("click", () => $("importFile").click());
+$("importFile").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  const m = $("importMsg"); say(m, "Importing " + f.name + "...", true);
+  try {
+    const r = await fetch("/api/contacts/import", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/octet-stream" }, body: f });
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 401) { showLogin(); return; }
+    if (!r.ok) throw new Error(d.error || "Import failed.");
+    contacts = await api("/api/contacts"); renderChips(); render();
+    say(m, `Added ${d.added} contact${d.added === 1 ? "" : "s"}. Skipped ${d.skipped} (duplicates, missing name or invalid email).`, true);
+  } catch (err) { say(m, err.message); }
 });
