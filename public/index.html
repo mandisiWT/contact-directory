@@ -20,7 +20,7 @@
     <p class="sub">Sign in to view and manage the directory.</p>
     <form id="loginForm" class="form">
       <label>Username<input id="lu" required autocomplete="username"></label>
-      <label>Password<input id="lp" type="password" required autocomplete="current-password"></label>
+      <label>Password<span class="pw"><input id="lp" type="password" required autocomplete="current-password"><button class="btn ghost sm" type="button" id="togglePw" aria-pressed="false">Show</button></span></label>
       <p class="err" id="loginErr" role="alert"></p>
       <button class="btn" type="submit">Sign in</button>
     </form>
@@ -48,6 +48,7 @@
     <main id="directory">
       <p class="count" id="count" aria-live="polite"></p>
       <div class="list" id="grid"></div>
+      <div class="pager" id="pager" hidden><button class="btn ghost sm" id="prevBtn" type="button">&larr; Previous</button><span id="pageInfo" aria-live="polite"></span><button class="btn ghost sm" id="nextBtn" type="button">Next &rarr;</button></div>
     </main>
   </div>
 
@@ -92,6 +93,20 @@
     </form>
   </section>
   <div class="actions"><button class="btn ghost" type="button" id="acctClose">Close</button></div>
+</dialog>
+
+<dialog id="impDlg">
+  <form id="impForm" class="form">
+    <h2>Import contacts</h2>
+    <p class="sub" id="impInfo"></p>
+    <div id="impMap" class="impmap"></div>
+    <div id="impSample" class="sample"></div>
+    <p class="err" id="impErr" role="alert"></p>
+    <div class="actions">
+      <button class="btn ghost" type="button" id="impCancel">Cancel</button>
+      <button class="btn" type="submit">Import</button>
+    </div>
+  </form>
 </dialog>
 
 <script src="script.js"></script>
