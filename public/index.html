@@ -3,56 +3,157 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0b2f2c" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#080e0d" media="(prefers-color-scheme: dark)">
 <title>Contact Directory</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="logo"><i>C</i> Contact Directory</div>
-    <nav id="userbar" hidden><span id="who"></span><button class="btn ghost" id="acctBtn">Account</button><button class="btn ghost" id="logout">Log out</button></nav>
-  </header>
 
-  <!-- Sign-in view -->
-  <section id="loginView" class="login" hidden>
-    <h1>Sign in</h1>
-    <p class="sub">Sign in to view and manage the directory.</p>
-    <form id="loginForm" class="form">
-      <label>Username<input id="lu" required autocomplete="username"></label>
-      <label>Password<span class="pw"><input id="lp" type="password" required autocomplete="current-password"><button class="btn ghost sm" type="button" id="togglePw" aria-pressed="false">Show</button></span></label>
-      <p class="err" id="loginErr" role="alert"></p>
-      <button class="btn" type="submit">Sign in</button>
-    </form>
-  </section>
+<!-- Sign-in -->
+<div id="loginView" class="auth" hidden>
+  <div class="auth-card">
+    <div class="brand"><i aria-hidden="true">CD</i><span>Contact Directory</span></div>
 
-  <!-- Directory view -->
-  <div id="appView" hidden>
-    <section class="hero">
-      <h1>Find the right person, fast.</h1>
-      <p>Search by name, role, or department to get an email address or phone number.</p>
-      <div class="searchrow">
-        <div class="sw"><label class="search">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input id="q" type="search" placeholder="Search contacts" aria-label="Search contacts" autocomplete="off">
-        </label>
+    <section id="signinPanel">
+      <h1>Sign in</h1>
+      <p class="sub">Use your directory account to view and manage contacts.</p>
+      <form id="loginForm" class="form">
+        <label>Username<input id="lu" required autocomplete="username"></label>
+        <label>Password<span class="pw"><input id="lp" type="password" required autocomplete="current-password"><button class="btn ghost sm" type="button" id="togglePw" aria-pressed="false">Show</button></span></label>
+        <p class="err" id="loginErr" role="alert"></p>
+        <button class="btn" type="submit">Sign in</button>
+        <button class="linklike" type="button" id="forgotLink">Forgot your password?</button>
+      </form>
+    </section>
+
+    <section id="forgotPanel" hidden>
+      <h1>Reset your password</h1>
+      <p class="sub">Enter your username or the email address on your account. If we have an email on file, we will send a link that works for 30 minutes.</p>
+      <form id="forgotForm" class="form">
+        <label>Username or email<input id="fid" required autocomplete="username" maxlength="200"></label>
+        <p id="forgotMsg" role="status"></p>
+        <button class="btn" type="submit" id="forgotBtn">Send reset link</button>
+        <button class="linklike" type="button" id="backToSignin">Back to sign in</button>
+      </form>
+    </section>
+  </div>
+</div>
+
+<!-- App -->
+<div id="appView" class="shell" hidden>
+  <aside class="rail">
+    <div class="brand"><i aria-hidden="true">CD</i><span>Contact Directory</span></div>
+    <nav class="tabs" id="tabs" aria-label="Sections">
+      <button type="button" data-tab="directory" aria-current="page">Directory</button>
+      <button type="button" data-tab="activity" hidden>Activity</button>
+      <button type="button" data-tab="users" hidden>Users</button>
+    </nav>
+    <div class="me">
+      <div class="me-id"><b id="who"></b><small id="whoRole"></small></div>
+      <div class="me-btns"><button class="btn rail-btn" id="acctBtn" type="button">Account</button><button class="btn rail-btn" id="logout" type="button">Log out</button></div>
+    </div>
+  </aside>
+
+  <main class="stage">
+    <!-- Directory -->
+    <section id="tab-directory">
+      <header class="page-head split">
+        <div><h1>Directory</h1><p id="headCount" class="muted"></p></div>
+        <div class="toolbar-actions">
+          <button class="btn ghost" id="importBtn" type="button" hidden>Import Excel</button>
+          <input type="file" id="importFile" accept=".xlsx" hidden>
+          <button class="btn" id="addBtn" type="button" hidden>Add contact</button>
+        </div>
+      </header>
+
+      <div class="toolbar">
+        <div class="sw">
+          <label class="search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="q" type="search" placeholder="Search by name, role, department, email or phone" aria-label="Search contacts" autocomplete="off">
+          </label>
           <ul id="sugg" class="sugg" role="listbox" hidden></ul>
         </div>
-        <button class="btn ghost" id="importBtn" hidden>Import Excel</button>
-        <input type="file" id="importFile" accept=".xlsx" hidden>
-        <button class="btn" id="addBtn">+ Add contact</button>
+        <label class="inline">Department<select id="deptSel"></select></label>
       </div>
-      <div class="filters"><label for="deptSel">Department</label><select id="deptSel"></select></div>
       <p id="importMsg" role="status"></p>
-    </section>
-    <main id="directory">
-      <p class="count" id="count" aria-live="polite"></p>
-      <div class="list" id="grid"></div>
-      <div class="pager" id="pager" hidden><button class="btn ghost sm" id="prevBtn" type="button">&larr; Previous</button><span id="pageInfo" aria-live="polite"></span><button class="btn ghost sm" id="nextBtn" type="button">Next &rarr;</button></div>
-    </main>
-  </div>
 
-  <footer>Contact Directory</footer>
+      <section class="selbar" id="exportPanel" hidden aria-label="Export contacts">
+        <div class="selbar-main">
+          <label class="chk"><input type="checkbox" id="selectPage"> Select this page</label>
+          <button class="linklike" id="selectAllBtn" type="button" hidden></button>
+          <span id="exportCount" aria-live="polite">Nobody selected</span>
+          <button class="linklike" id="clearSelection" type="button">Clear</button>
+        </div>
+        <div class="selbar-export">
+          <label class="inline">Format<select id="exportFormat"><option value="csv">CSV (.csv)</option><option value="xlsx">Excel (.xlsx)</option></select></label>
+          <button class="btn sm" id="exportBtn" type="button" disabled>Export selected</button>
+        </div>
+      </section>
+      <p id="exportMsg" role="status"></p>
+
+      <div class="list" id="listWrap">
+        <div class="thead" id="thead" aria-hidden="true"><span></span><span>Person</span><span>Department</span><span>Contact</span><span></span></div>
+        <div id="grid"></div>
+      </div>
+
+      <div class="more" id="moreNote" hidden></div>
+      <nav class="pager" id="pager" aria-label="Pages" hidden></nav>
+    </section>
+
+    <!-- Activity (admin) -->
+    <section id="tab-activity" hidden>
+      <header class="page-head">
+        <h1>Activity</h1>
+        <p class="muted">Every addition, edit and removal, and who made it. Times are in your local time.</p>
+      </header>
+
+      <form class="toolbar act-filters" id="actForm">
+        <label class="inline">Show<select id="actType">
+          <option value="">Everything</option>
+          <option value="contacts">Contact changes</option>
+          <option value="exports">Contact exports</option>
+          <option value="users">Users and permissions</option>
+          <option value="passwords">Passwords</option>
+        </select></label>
+        <label class="inline">From<input type="date" id="actFrom"></label>
+        <label class="inline">To<input type="date" id="actTo"></label>
+        <label class="inline grow">Search<input type="search" id="actQ" placeholder="Search activity" maxlength="100"></label>
+        <button class="btn ghost sm" type="button" id="actReset">Reset</button>
+      </form>
+
+      <section class="selbar" aria-label="Export activity report">
+        <div class="selbar-main"><span id="actCount" aria-live="polite"></span></div>
+        <div class="selbar-export">
+          <label class="inline">Report format<select id="actFormat"><option value="csv">CSV (.csv)</option><option value="xlsx">Excel (.xlsx)</option></select></label>
+          <button class="btn sm" id="actExport" type="button">Export report</button>
+        </div>
+      </section>
+      <p id="actMsg" role="status"></p>
+
+      <div class="list acts" id="actList"></div>
+      <nav class="pager" id="actPager" aria-label="Activity pages" hidden></nav>
+    </section>
+
+    <!-- Users (admin) -->
+    <section id="tab-users" hidden>
+      <header class="page-head split">
+        <div><h1>Users</h1><p class="muted">Choose who can sign in and what they can do.</p></div>
+        <button class="btn" id="addUserBtn" type="button">Add user</button>
+      </header>
+      <p class="notice" id="mailNotice" hidden>Password reset emails are not switched on yet. Add your email sending details (Brevo or Gmail) to the server settings, as described in the setup guide, then restart.</p>
+      <dl class="perms">
+        <div><dt>View only</dt><dd>Search and read contacts.</dd></div>
+        <div><dt>Can edit</dt><dd>Add, edit, delete, import and export contacts.</dd></div>
+        <div><dt>Admin</dt><dd>Everything above, plus users, permissions and the activity log.</dd></div>
+      </dl>
+      <p id="userMsg" role="status"></p>
+      <div class="list users" id="userList"></div>
+    </section>
+  </main>
 </div>
 
 <dialog id="dlg">
@@ -72,26 +173,38 @@
   </form>
 </dialog>
 
+<dialog id="userDlg">
+  <form id="userForm" class="form">
+    <h2>Add user</h2>
+    <label>Username<input id="nu_name" required minlength="3" maxlength="50" autocomplete="off"></label>
+    <label>Email (used to reset their password)<input id="nu_email" type="email" maxlength="200" autocomplete="off"></label>
+    <label>Temporary password (8+ characters)<input id="nu_pw" type="password" required minlength="8" autocomplete="new-password"></label>
+    <label>Permission<select id="nu_role"><option value="viewer">View only</option><option value="editor">Can edit</option><option value="admin">Admin</option></select></label>
+    <p class="err" id="userFormErr" role="alert"></p>
+    <div class="actions">
+      <button class="btn ghost" type="button" id="userCancel">Cancel</button>
+      <button class="btn" type="submit">Add user</button>
+    </div>
+  </form>
+</dialog>
+
 <dialog id="acctDlg">
+  <h2>Your account</h2>
   <form id="pwForm" class="form">
-    <h2>Change password</h2>
+    <h3>Change password</h3>
     <label>Current password<input id="pw_cur" type="password" required autocomplete="current-password"></label>
     <label>New password (8+ characters)<input id="pw_new" type="password" required minlength="8" autocomplete="new-password"></label>
     <p id="pwMsg" role="status"></p>
     <button class="btn" type="submit">Update password</button>
   </form>
-  <section id="usersSec" hidden>
-    <hr>
-    <h2>Users</h2>
-    <ul id="userList" class="ulist"></ul>
-    <form id="userForm" class="form">
-      <label>New username<input id="nu_name" required minlength="3" maxlength="50" autocomplete="off"></label>
-      <label>Temporary password (8+ characters)<input id="nu_pw" type="password" required minlength="8" autocomplete="new-password"></label>
-      <label>Role<select id="nu_role"><option value="viewer">Viewer (view only)</option><option value="editor">Editor (add, edit, delete contacts)</option><option value="admin">Admin (editor + manage users)</option></select></label>
-      <p id="userMsg" role="status"></p>
-      <button class="btn" type="submit">Add user</button>
-    </form>
-  </section>
+  <hr>
+  <form id="mailForm" class="form">
+    <h3>Email for password resets</h3>
+    <label>Email address<input id="em_new" type="email" required maxlength="200" autocomplete="email"></label>
+    <label>Current password<input id="em_cur" type="password" required autocomplete="current-password"></label>
+    <p id="emMsg" role="status"></p>
+    <button class="btn" type="submit">Save email</button>
+  </form>
   <div class="actions"><button class="btn ghost" type="button" id="acctClose">Close</button></div>
 </dialog>
 

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="referrer" content="no-referrer">
+<title>Choose a new password - Contact Directory</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="auth">
+  <div class="auth-card">
+    <div class="brand"><i aria-hidden="true">CD</i><span>Contact Directory</span></div>
+    <section id="checking"><p class="sub">Checking your link...</p></section>
+    <section id="formPanel" hidden>
+      <h1>Choose a new password</h1>
+      <p class="sub">Pick something you don't use anywhere else. At least 8 characters.</p>
+      <form id="resetForm" class="form">
+        <label>New password<input id="np1" type="password" required minlength="8" autocomplete="new-password"></label>
+        <label>Type it again<input id="np2" type="password" required minlength="8" autocomplete="new-password"></label>
+        <p id="resetMsg" role="status"></p>
+        <button class="btn" type="submit" id="resetBtn">Save new password</button>
+      </form>
+    </section>
+    <section id="donePanel" hidden>
+      <h1>Password updated</h1>
+      <p class="sub">You can now sign in with your new password.</p>
+      <a class="btn" href="/">Go to sign in</a>
+    </section>
+    <section id="badPanel" hidden>
+      <h1>This link no longer works</h1>
+      <p class="sub">Reset links work once and expire after 30 minutes. Request a new one from the sign-in page.</p>
+      <a class="btn" href="/">Back to sign in</a>
+    </section>
+  </div>
+</div>
+<script src="reset.js"></script>
+</body>
+</html>
